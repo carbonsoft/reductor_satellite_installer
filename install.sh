@@ -22,7 +22,7 @@ cleanup_src() {
 
 patch_path() {
 	echo "Патчим пути"
-	for file in etc/const bin/{update.sh,rkn_download.sh,sync_time.sh,menu,setup_master.sh} usr/share/menu_lib; do
+	for file in etc/const bin/{update.sh,rkn_download.sh,sync_time.sh,menu,setup_master.sh} usr/share/menu_lib contrib/etc/cron.d/reductor; do
 		sed -e "s|/usr/local/Reductor|$MAINDIR|g" -i $MAINDIR/$file
 	done
 }
@@ -84,14 +84,21 @@ restore() {
 
 finish_msg() {
 	echo "Отлично, установка завершена!"
-	echo "Запустите /opt/reductor_satellite/bin/setup_master.sh"
+	echo "Запустите $MAINDIR/bin/setup_master.sh или menu для дальнейшей настройки"
+	echo "(находясь на сервере с carbon reductor satellite)"
 }
+
+put_crontab() {
+	egrep -w "(^(#|[A-Z]+)|update.sh)" $MAINDIR/contrib/etc/cron.d/reductor > /etc/cron.d/satellite
+}
+
 main() {
 	set_env
 	cleanup_src
 	patch_path
 	fix_update
 	fix_master
+	put_crontab
 	create_rkn_hook
 	restore
 	symlinks
