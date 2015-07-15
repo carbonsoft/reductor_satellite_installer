@@ -76,6 +76,10 @@ symlinks() {
 restore() {
 	if [ -f /root/reductor_backup.tar.gz ]; then
 		echo "TODO: restore from backup"
+		mkdir -p /tmp/reductor_backup/
+		tar -xzf /root/reductor_backup.tar.gz -C /tmp/reductor_backup usr/local/Reductor/userinfo/config usr/local/Reductor/userinfo/provider.pem
+		cp -apv /tmp/reductor_backup/usr/local/Reductor/userinfo/{config,provider.pem} /opt/reductor_satellite/userinfo/
+		rm -rf /tmp/reductor_backup
 	fi
 }
 
