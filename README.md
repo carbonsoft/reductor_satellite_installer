@@ -26,3 +26,7 @@
     yum -y install git
     git clone https://github.com/carbonsoft/reductor_satellite_installer.git /opt/reductor_satellite_installer/
     bash /opt/reductor_satellite_installer/install.sh
+
+## Поддерживаемые ОС
+
+Только CentOS 6. В теории должны работать любые современные RHEL-based дистрибутивы, но их не тестировали.
