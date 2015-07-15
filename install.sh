@@ -6,6 +6,7 @@ MAINDIR=/opt/reductor_satellite
 
 set_env() {
 	rm -rf $MAINDIR/
+	yum -y install tar # бывает что его нету
 	yum -y install http://download5.carbonsoft.ru/reductor/reductor.rpm
 	cp -ap /usr/local/Reductor/ $MAINDIR/
 	yum -y erase reductor
