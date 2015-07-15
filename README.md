@@ -1,6 +1,6 @@
-# reductor_satellite_installer
+# Reductor Satellite Installer
 
-Превращает продукт Carbon Reductor в упрощённую систему выгрузок единого реестра.
+Превращает продукт Carbon Reductor в упрощённую систему выгрузок единого реестра (обычно используется для перестраховки).
 
 ## Фишки
 
