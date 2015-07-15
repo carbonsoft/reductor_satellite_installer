@@ -88,8 +88,9 @@ main() {
 	patch_path
 	fix_update
 	fix_master
-	reduce_config
 	create_rkn_hook
+	restore
+	reduce_config
 }
 
 ${@:-main}
