@@ -44,8 +44,6 @@
 
         /opt/reductor_satellite/bin/setup_master.sh
 
-затем подложите в /opt/reductor_satellite/userinfo/provider.pem экспортированный сертификат для работы выгрузок.
-
-Этого должно быть достаточно чтобы выгрузка работала. Проверить можно:
+затем подложите в /opt/reductor_satellite/userinfo/provider.pem экспортированный сертификат для работы выгрузок. Этого должно быть достаточно чтобы выгрузка работала. Проверить можно:
 
         /opt/reductor_satellite/bin/update.sh
