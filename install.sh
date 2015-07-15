@@ -90,6 +90,7 @@ finish_msg() {
 
 put_crontab() {
 	egrep -w "(^(#|[A-Z]+)|update.sh)" $MAINDIR/contrib/etc/cron.d/reductor > /etc/cron.d/satellite
+	service crond restart
 }
 
 main() {
