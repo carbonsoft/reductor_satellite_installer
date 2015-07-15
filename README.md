@@ -29,25 +29,25 @@
     git clone https://github.com/carbonsoft/reductor_satellite_installer.git /opt/reductor_satellite_installer/
     /opt/reductor_satellite_installer/install.sh
 
-## Поддерживаемые ОС
-
-Только CentOS 6. В теории должны работать любые современные RHEL-based дистрибутивы, но их не тестировали.
-Можно легко крутить в виртуальных машинах и контейнерах (lxc, openvz)
-
-## Цена
-
-Абсолютно бесплатно, но поддержка оказывается только при наличии лицензии Carbon Reductor (любое SLA).
-
 ## Настройка
 
 При установке с настроенного Carbon Reductor ничего настраивать не надо, просто проверьте выгрузки.
 
 Запустите эту команду, включите обновление списков, укажите название компании, инн, огрн и почту для того чтобы выгрузки работали:
 
-        /opt/reductor_satellite/bin/setup_master.sh
+    /opt/reductor_satellite/bin/setup_master.sh
 
 затем подложите в /opt/reductor_satellite/userinfo/provider.pem экспортированный сертификат для работы выгрузок. Этого должно быть достаточно чтобы выгрузка работала.
 
 ## Проверка работоспособности
 
-        /opt/reductor_satellite/bin/update.sh
+    /opt/reductor_satellite/bin/update.sh
+
+## Цена
+
+Абсолютно бесплатно, но поддержка оказывается только при наличии лицензии Carbon Reductor (любое SLA).
+
+## Поддерживаемые ОС
+
+Только CentOS 6. В теории должны работать любые современные RHEL-based дистрибутивы, но их не тестировали.
+Можно легко крутить в виртуальных машинах и контейнерах (lxc, openvz)
