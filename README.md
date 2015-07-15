@@ -15,13 +15,13 @@
 
 ### С Carbon Reductor
 
-  # /usr/local/Reductor/bin/setup_satellite.sh 
-  Usage: /usr/local/Reductor/bin/setup_satellite.sh <ip of satellite machine> [ssh port]
-  Example: /usr/local/Reductor/bin/setup_satellite.sh 10.90.30.35
-  Example: /usr/local/Reductor/bin/setup_satellite.sh 10.90.30.36 33
+    # /usr/local/Reductor/bin/setup_satellite.sh 
+    Usage: /usr/local/Reductor/bin/setup_satellite.sh <ip of satellite machine> [ssh port]
+    Example: /usr/local/Reductor/bin/setup_satellite.sh 10.90.30.35
+    Example: /usr/local/Reductor/bin/setup_satellite.sh 10.90.30.36 33
 
 ### Без Carbon Reductor
 
-  yum -y install git
-  git clone https://github.com/carbonsoft/reductor_satellite_installer.git /opt/reductor_satellite_installer/
-  bash /opt/reductor_satellite_installer/install.sh
+    yum -y install git
+    git clone https://github.com/carbonsoft/reductor_satellite_installer.git /opt/reductor_satellite_installer/
+    bash /opt/reductor_satellite_installer/install.sh
