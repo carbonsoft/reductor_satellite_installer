@@ -22,7 +22,7 @@ cleanup_src() {
 
 patch_path() {
 	echo "Патчим пути"
-	for file in etc/const bin/{update.sh,rkn_download.sh,sync_time.sh,menu,setup_master.sh} usr/share/menu_lib contrib/etc/cron.d/reductor reductor_container/virtualenv/bin/activate; do
+	for file in etc/const bin/{{update,sync_time,setup_master}.sh,menu,rkn_download.{sh,py}} usr/share/menu_lib contrib/etc/cron.d/reductor reductor_container/virtualenv/bin/activate; do
 		sed -e "s|/usr/local/Reductor|$MAINDIR|g" -i $MAINDIR/$file
 	done
 }
