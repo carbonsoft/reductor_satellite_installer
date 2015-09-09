@@ -22,8 +22,8 @@ cleanup_src() {
 
 patch_path() {
 	echo "Патчим пути"
-	for file in $(find bin/ etc/const usr/ contrib reductor_container/virtualenv/bin/ -type f); do
-		sed -e "s|/usr/local/Reductor|$MAINDIR|g" -i $MAINDIR/$file
+	for file in $(find $MAINDIR/{bin,usr,etc,contrib,reductor_container/virtualenv/bin}/ -type f); do
+		sed -e "s|/usr/local/Reductor|$MAINDIR|g" -i $file
 	done
 }
 
