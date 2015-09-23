@@ -40,8 +40,15 @@ fix_sync_time() {
 
 fix_master() {
 	echo "Урезаем мастер настройки"
-	grep -B 1000 -m 1 save_and_exit $MAINDIR/bin/setup_master.sh > /tmp/setup_master.sh
+	grep -v "^main$" $MAINDIR/bin/setup_master.sh > /tmp/setup_master.sh
 	cat /tmp/setup_master.sh > $MAINDIR/bin/setup_master.sh
+	echo "main() {
+	registration
+	rkn_update
+}
+
+main
+" >> $MAINDIR/bin/setup_master.sh
 }
 
 reduce_config() {
