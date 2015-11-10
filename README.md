@@ -49,6 +49,16 @@
 
 затем подложите в /opt/reductor_satellite/userinfo/provider.pem экспортированный сертификат для работы выгрузок. Этого должно быть достаточно чтобы выгрузка работала.
 
+### Настройка проверки фильтрации трафика
+
+Для проверки 4 раза в день, добавьте в /etc/crontab строчку:
+    
+    0 0,6,12,18 * * * root /opt/reductor_satellite/bin/filter_checker.sh < /opt/reductor_satellite/lists/rkn.list &>/dev/null
+
+Подробнее о том, как настроить время запуска проверки можно прочитать здесь:
+
+    man 5 crontab
+    
 ## Проверка работоспособности
 
     /opt/reductor_satellite/bin/update.sh
