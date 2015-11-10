@@ -65,4 +65,4 @@ create_report() {
 clean
 main_loop < "${1:-$RKN_LIST}"
 create_report > $DATADIR/report
-/opt/reductor_satellite/bin/send_report.sh
+/opt/reductor_satellite/bin/send_report.sh "${admin['ip']:-${autoupdate['email']}}"

@@ -53,7 +53,7 @@ main
 
 reduce_config() {
 	echo "Удаляем лишнее из конфига"
-	egrep -w "(bash|(^declare -A |^)autoupdate)" $MAINDIR/userinfo/config | egrep -v "(own|url|skip_sign_request)" > /tmp/config
+	egrep -w "(bash|(^declare -A |^)autoupdate)" $MAINDIR/userinfo/config | egrep -v "(url|skip_sign_request)" > /tmp/config
 	cat /tmp/config > $MAINDIR/userinfo/config
 }
 
@@ -100,6 +100,11 @@ put_crontab() {
 	service crond restart
 }
 
+copy_contrib() {
+	echo "Добавляем дополнительные скрипты"
+	cp -av /opt/reductor_satellite_installer/scripts/*.sh $MAINDIR/bin/
+}
+
 main() {
 	set_env
 	cleanup_src
@@ -111,6 +116,7 @@ main() {
 	restore
 	symlinks
 	reduce_config
+	copy_contrib
 	finish_msg
 }
 
