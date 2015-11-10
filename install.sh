@@ -43,7 +43,7 @@ fix_master() {
 	grep -v "^main$" $MAINDIR/bin/setup_master.sh > /tmp/setup_master.sh
 	cat /tmp/setup_master.sh > $MAINDIR/bin/setup_master.sh
 	echo "main() {
-	registration
+	# registration
 	rkn_update
 }
 
