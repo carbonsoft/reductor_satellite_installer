@@ -76,9 +76,8 @@
 
 Правильного способа пока нет. Временное решение:
 
-    service satellite export /root/backup.tar.gz
-    yum -y erase reductor
+    /opt/reductor_satellite/bin/export.sh /root/backup.tar.gz
     cd /opt/reductor_satellite_installer/
     git pull origin master
     ./install.sh
-    service satellite import /root/backup.tar.gz
+    /opt/reductor_satellite/bin/import.sh /root/backup.tar.gz
