@@ -71,3 +71,14 @@
     /opt/reductor_satellite/reductor_container/gost-ssl/php/dump.xml
 
 Вы можете установить и настроить на этом же сервере vsftpd, nginx или закинуть ключи ssh и забирать этот список с помощью SCP или забирать файл любым другим удобным способом - вы полностью свободны в выборе удобного для Вас средства, а satellite - инструмент, хорошо выполняющий свою задачу - выгрузку реестра.
+
+### Как обновить Carbon Reductor Satellite
+
+Правильного способа пока нет. Временное решение:
+
+    service satellite export /root/backup.tar.gz
+    yum -y erase reductor
+    cd /opt/reductor_satellite_installer/
+    git pull origin master
+    ./install.sh
+    service satellite import /root/backup.tar.gz
