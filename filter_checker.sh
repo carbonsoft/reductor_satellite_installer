@@ -3,12 +3,14 @@
 THREADS=15
 MAINDIR=/opt/reductor_satellite/
 DATADIR=$MAINDIR/var/
+TMPDIR=/tmp/filter_check/
+RKN_LIST=$MAINDIR/lists/rkn.list
 
 trap show_report EXIT
 trap show_report HUP
 
 check_url() {
-	local file=/tmp/random/$((RANDOM))
+	local file=$TMPDIR/$((RANDOM))
 	if ! curl -sSL "$1" > $file; then
 		echo "$1" >> $DATADIR/2
 		rm -f $file
@@ -20,7 +22,7 @@ check_url() {
 }
 
 clean() {
-	mkdir -p $DATADIR/
+	mkdir -p $DATADIR/ $TMPDIR/
 	for f in 0 1 2; do
 		> $DATADIR/$f
 	done
@@ -62,6 +64,6 @@ create_report() {
 }
 
 clean
-main_loop
+main_loop < "${1:-$RKN_LIST}"
 create_report > $DATADIR/report
 /opt/reductor_satellite/bin/send_report.sh
