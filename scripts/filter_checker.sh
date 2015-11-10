@@ -1,7 +1,9 @@
 #!/bin/bash
 
+. /opt/reductor_satellite/etc/const
+. $CONFIG
+
 THREADS=15
-MAINDIR=/opt/reductor_satellite/
 DATADIR=$MAINDIR/var/
 TMPDIR=/tmp/filter_check/
 RKN_LIST=$MAINDIR/lists/rkn.list
