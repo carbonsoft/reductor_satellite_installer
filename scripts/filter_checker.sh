@@ -34,7 +34,7 @@ main_loop() {
 	while sleep 0.1; do
 		for i in $(seq 1 $THREADS); do
 			read -t 1 url || break 2
-			check_url $url &
+			check_url "$url" &
 		done
 		wait
 		show_report
