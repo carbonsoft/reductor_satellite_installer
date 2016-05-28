@@ -4,17 +4,29 @@
 . $CONFIG
 
 THREADS=15
+FIRST_BYTES_FOR_CHECK=3000
 DATADIR=$MAINDIR/var/
 TMPDIR=/tmp/filter_check/
 RKN_LIST=$MAINDIR/lists/rkn.list
+CURL="curl --connect-timeout 10 -sSL"
+WGET="wget -t 1 -T 10 -q -O-"
 
 trap show_report EXIT
 trap show_report HUP
 
 check_url() {
-	local file=$TMPDIR/$((RANDOM))
-	if ! curl -sSL "$1" > $file; then
+	local file="$(mktemp $TMPDIR/XXXXXX)"
+	if ! $CURL "$1" | head -c $FIRST_BYTES_FOR_CHECK > $file; then
 		echo "$1" >> $DATADIR/2
+		rm -f $file
+		return
+	fi
+	grep -q '<title>Доступ ограничен</title>' $file
+	echo "$1" >> $DATADIR/$?
+	rm -f $file
+
+	if ! $WGET "$1" | head -c $FIRST_BYTES_FOR_CHECK > $file; then
+		echo "$1" >> "$DATADIR/2"
 		rm -f $file
 		return
 	fi
