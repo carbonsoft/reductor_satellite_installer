@@ -3,11 +3,12 @@
 # (c) Carbon Soft
 
 MAINDIR=/opt/reductor_satellite
+RPM_URL="${RPM_URL:-http://download5.carbonsoft.ru/reductor/reductor.rpm}"
 
 set_env() {
 	rm -rf $MAINDIR/
 	yum -y install tar cronie # бывает что их нету
-	yum -y install http://download5.carbonsoft.ru/reductor/reductor.rpm
+	yum -y install $RPM_URL
 	cp -ap /usr/local/Reductor/ $MAINDIR/
 	yum -y erase reductor
 	mkdir -p /var/log/reductor/
