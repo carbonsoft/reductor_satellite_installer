@@ -8,7 +8,7 @@ FIRST_BYTES_FOR_CHECK=3000
 DATADIR=$MAINDIR/var/
 TMPDIR=/tmp/filter_check/
 RKN_LIST=$MAINDIR/lists/rkn.list
-CURL="curl --connect-timeout 10 -sSL"
+CURL="curl --insecure --connect-timeout 10 -sSL"
 WGET="wget -t 1 -T 10 -q -O-"
 
 trap show_report EXIT
