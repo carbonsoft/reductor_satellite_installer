@@ -69,6 +69,7 @@ main() {
         prepare
         check_private_key
         chroot_work
+        $BINDIR/dump_parser.sh
         client_post_hook
         log "Завершено обновление списков РосКомНадзора"
         log "Завершено обновление списков РосКомНадзора" >> $LOGFILE
