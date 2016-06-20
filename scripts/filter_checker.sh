@@ -67,7 +67,7 @@ create_report() {
 	fi
 
 	echo "# Проход по незаблокированным в первом прогоне"
-	cp $DATADIR/1 $DATADIR/first_check
+	sort -u $DATADIR/1 > $DATADIR/first_check
 	clean
 	main_loop < $DATADIR/first_check &>/dev/null
 	show_report
