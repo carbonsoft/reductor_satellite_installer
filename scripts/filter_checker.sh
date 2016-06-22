@@ -81,7 +81,13 @@ create_report() {
 	cat $DATADIR/1
 }
 
+use_hook() {
+	hook=$HOOKDIR/${0##*/}
+	[ -x $hook ] && . $hook
+}
+
 clean
 main_loop < "${1:-$RKN_LIST}"
 create_report > $DATADIR/report
 /opt/reductor_satellite/bin/send_report.sh "${admin['ip']:-${autoupdate['email']}}"
+use_hook
