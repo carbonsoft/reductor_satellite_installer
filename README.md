@@ -97,11 +97,15 @@
 
 Правильного способа пока нет. Временное решение:
 
-    /opt/reductor_satellite/bin/export.sh /root/backup.tar.gz
-    cd /opt/reductor_satellite_installer/
-    git pull origin master
-    ./install.sh
-    /opt/reductor_satellite/bin/import.sh /root/backup.tar.gz
+    /opt/reductor_satellite/update.sh
+
+Можно явно задать URL RPM-пакета
+
+    RPM_URL=http://download5.carbonsoft.ru//reductor/master/reductor-711-107-master.el6.x86_64.rpm ./update.sh
+
+или
+
+    RPM_URL=http://download5.carbonsoft.ru//reductor/devel/reductor.rpm ./update.sh
 
 Для обновления скриптов проверки фильтрации можно обойтись:
     
