@@ -14,7 +14,7 @@ Subject: Отчёт о фильтрации Reductor"
 echo "$HEADER" > /tmp/report
 
 russification() {
-	sed 's/ok/заблокировано/;s/fail/не заблокировано/;s/not open/не открывается/;'
+	sed 's/ok/заблокировано/;s/fail/не заблокировано/;s/not open/не открывается/;s/total/всего/'
 }
 
 russification < /opt/reductor_satellite/var/report | tr '#' '\n' >> /tmp/report
