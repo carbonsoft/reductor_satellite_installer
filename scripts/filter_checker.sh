@@ -160,7 +160,7 @@ show_report_full() {
 }
 
 show_report_oneline() {
-	echo "$(date +"%Y.%m.%d %H:%M:%S") $1 $3/$2 ok / $4/$2 fail / $5/$2 not open"
+	echo "$(date +"%Y.%m.%d %H:%M:%S") $1: $3 ok | $4 fail | $5 not open | $2 total"
 }
 
 get_result() {
