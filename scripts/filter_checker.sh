@@ -146,9 +146,10 @@ send_reports() {
 }
 
 show_report_stat() {
-	echo "$1 $2 ok $3 $(date +%s)"
-	echo "$1 $2 fail $4 $(date +%s)"
-	echo "$1 $2 not_open $5 $(date +%s) "
+	echo "$1 $2 ok $3"
+	echo "$1 $2 fail $4"
+	echo "$1 $2 not_open $5"
+	echo "$1 $2 total $6"
 }
 
 show_report_full() {
@@ -182,7 +183,7 @@ show_report() {
 
 	show_report_oneline $proto $total $ok $fail $not_open
 	if [ "${2:-short}" == 'stat' ]; then
-		show_report_stat $proto $report_type $ok $fail $not_open >> $DATADIR/report.sys
+		show_report_stat $proto $report_type $ok $fail $not_open $total >> $DATADIR/report.sys
 	fi
 	[ "$fail" == 0 ] && return 0
 	if [ "${2:-short}" == 'full' ]; then
