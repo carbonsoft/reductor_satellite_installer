@@ -1,97 +1,249 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-. /opt/reductor_satellite/etc/const
-. $CONFIG
+set -u
+
+CONST=/opt/reductor_satellite/etc/const
+SYSCONFIG=/etc/sysconfig/satellite
+
+if [ ! -f $CONST ]; then
+	MAINDIR="./"
+	LISTDIR="$MAINDIR/lists"
+	HOOKDIR="$MAINDIR/userinfo/hooks"
+	declare -A admin
+	declare -A autoupdate
+else
+	. $CONST
+	. $CONFIG
+fi
+
+if [ -f $SYSCONFIG ]; then
+	. $SYSCONFIG
+fi
+
+declare -A lists
+# shellcheck disable=SC2154
+lists['http']="${http:-$LISTDIR/rkn.list}"
+# shellcheck disable=SC2154
+lists['dns']="${dns:-$LISTDIR//rkn.httpslist}"
+# shellcheck disable=SC2154
+lists['https']="${https:-$LISTDIR//rkn.https_urls}"
 
 VERBOSE="${VERBOSE:-0}"
 THREADS=15
 FIRST_BYTES_FOR_CHECK=3000
-DATADIR=$MAINDIR/var/
+DATADIR=$MAINDIR/var
 TMPDIR=/tmp/filter_check/
-RKN_LIST=$MAINDIR/lists/rkn.list
+MARKER="${MARKER:-"<title>Доступ ограничен</title>"}"
+DNS_IP="${DNS_IP:-10.50.140.73}"
+SED=/usr/local/bin/gsed
+[ -f $SED ] || SED=sed
 CURL="curl --insecure --connect-timeout 10 -sSL"
-WGET="wget -t 1 -T 10 -q -O-"
+WGET="wget --content-on-error --no-check-certificate -t 1 -T 10 -q -O-"
+FINISHED=0
 
-trap show_report EXIT
-trap show_report HUP
-
-check_url() {
-	local rc
-	local file="$(mktemp $TMPDIR/XXXXXX)"
-	if ! $CURL "$1" > $file; then
-		echo "$1" >> $DATADIR/2
-		rm -f $file
-		return
-	fi
-	head -c $FIRST_BYTES_FOR_CHECK "$file" | grep -q '<title>Доступ ограничен</title>'
-	rc=$?
-	echo "$1" >> $DATADIR/$rc
-	[ "$rc" != 0 -a "$VERBOSE" = '1' ] && head -c "$FIRST_BYTES_FOR_CHECK" "$file" && exit
-	rm -f $file
-
-	if ! $WGET "$1" > "$file"; then
-		echo "$1" >> "$DATADIR/2"
-		rm -f $file
-		return
-	fi
-	head -c $FIRST_BYTES_FOR_CHECK "$file" | grep -q '<title>Доступ ограничен</title>'
-	echo "$1" >> $DATADIR/$?
-	rm -f $file
-}
+trap show_reports EXIT
+trap show_reports HUP
 
 clean() {
-	mkdir -p $DATADIR/ $TMPDIR/
+	mkdir -p $DATADIR/{dns,http,https} $TMPDIR/
 	for f in 0 1 2; do
-		> $DATADIR/$f
+		for d in $DATADIR/{dns,http,https}; do
+			> $d/$f
+		done
 	done
 }
 
-main_loop() {
+check_dns_a() {
+	dig "$1" A | grep -q "$2"
+}
+
+check_dns_aaaa() {
+	dig "$1" AAAA | grep -q 'ANSWER: 0'
+}
+
+check_dns() {
+	local proto dir
+	proto=$2
+	dir="$DATADIR/$proto"
+	check_dns_a "$1" "$DNS_IP"
+	echo "$1" >> $dir/$?
+	check_dns_aaaa "$1"
+	echo "$1" >> $DATADIR/dns/$?
+}
+
+check_url() {
+	local file
+	local dir
+    local rc
+	dir="$DATADIR/$2"
+	file="$(mktemp $TMPDIR/XXXXXX)"
+    for METHOD in "$CURL" "$WGET"; do
+        $METHOD "$1" > $file 2>/dev/null
+        rc=$?                   # wget return 8 on 404
+        if [ "$rc" -gt 0 ] && ! [ "$rc" = "8" -a "$METHOD" = "$WGET" ]; then
+            echo "$1" >> $dir/2
+            rm -f $file
+            return
+        fi
+        head -c $FIRST_BYTES_FOR_CHECK "$file" | grep -q "$MARKER"
+        echo "$1" >> $dir/$?
+        rm -f $file
+    done
+}
+
+checker() {
+	local func proto list
+	func=$1
+	proto=$2
+	list="${3:-${lists[$proto]}}"
+	echo "Начинаем проверять фильтрацию протокола $proto по файлу $list"
+	sleep 0.5
+	sort -u "$list" > "$list.sorted"
+	mv -f "$list.sorted" "$list"
 	while sleep 0.1; do
-		for i in $(seq 1 $THREADS); do
-			read -t 1 url || break 2
-			check_url "$url" &
+		for _ in $(seq 1 $THREADS); do
+			read -t 1 entry || break 2
+			$func "$entry" "$proto" &
 		done
 		wait
-		show_report
-	done
+		show_report "$proto"
+	done < "$list"
+    wait # after break 2 we can have some background jobs
+    show_report "$proto"
 }
 
-show_report() {
-	echo $(date) $(wc -l < $DATADIR/0) ok / $(wc -l < $DATADIR/1) fail / $(wc -l < $DATADIR/2) not open
-	cat $DATADIR/1
+http() {
+	checker check_url http
+}
+
+https() {
+	checker check_url https
+}
+
+dns() {
+	checker check_dns dns
 }
 
 create_report() {
-	echo "# Первый проход по всем URL от РКН"
-	show_report
-
-	if [ ! -s $DATADIR/1 ]; then
-		echo "# Всё URL блокируются"		
-		return
-	fi
-
-	echo "# Проход по незаблокированным в первом прогоне"
-	sort -u $DATADIR/1 > $DATADIR/first_check
-	clean
-	main_loop < $DATADIR/first_check &>/dev/null
-	show_report
-	
-	echo "# Оставшиеся незаблокированными"
-	cat $DATADIR/1
+	show_reports $1 stat > $DATADIR/$1.report
 }
 
-post_hook() { : }
-pre_hook() { : }
+create_reports() {
+	echo "# Первая проверка"
+	cat $DATADIR.first/first.report
+	echo "# Повторный проход по незаблокированным"
+	cat $DATADIR/repeat.report
+}
+
+send_reports() {
+	# shellcheck disable=SC2154
+	receiver="${admin['ip']:-${autoupdate['email']:-}}"
+	if [ -z "${receiver:-}" ]; then
+		echo "Пропускаем отправку, так как нет получателя"
+		return
+	fi
+	/opt/reductor_satellite/bin/send_report.sh $receiver
+}
+
+show_report_stat() {
+	echo "$1 $2 ok $3 $(date +%s)"
+	echo "$1 $2 fail $4 $(date +%s)"
+	echo "$1 $2 not_open $5 $(date +%s) "
+}
+
+show_report_full() {
+	echo
+	echo "### Not blocked by $1"
+	cat $2/1
+	echo
+}
+
+show_report_oneline() {
+	echo "$(date +"%Y.%m.%d %H:%M:%S") $1 $3/$2 ok / $4/$2 fail / $5/$2 not open"
+}
+
+get_result() {
+	total="$(wc -l < $1 | tr -d ' ')"
+	ok=$(wc -l < $2/0 | tr -d ' ')
+	fail=$(wc -l < $2/1 | tr -d ' ')
+	not_open=$(wc -l < $2/2 | tr -d ' ')
+	total=$((total*2))  # http(s) checked by curl/wget, dns by A/AAAA
+	echo $total $ok $fail $not_open
+}
+
+show_report() {
+	local proto dir list total ok fail not_open
+	proto="$1"
+	report_type="${3:-}"
+	dir="$DATADIR/$proto"
+	list="${lists[$proto]}"
+
+	read total ok fail not_open <<< "$(get_result $list $dir)"
+
+	show_report_oneline $proto $total $ok $fail $not_open
+	if [ "${2:-short}" == 'stat' ]; then
+		show_report_stat $proto $report_type $ok $fail $not_open >> $DATADIR/report.sys
+	fi
+	[ "$fail" == 0 ] && return 0
+	if [ "${2:-short}" == 'full' ]; then
+		show_report_full $proto $dir
+	fi
+}
+
+show_reports() {
+	RETVAL=$?
+	if [ "$RETVAL" != 0 ]; then
+		echo -n "ERROR($RETVAL): $0 "
+		for ((i=${#FUNCNAME[@]}; i>0; i--)); do
+			echo -n "${FUNCNAME[$i-1]} "
+		done | $SED -e 's/ $/\n/; s/ / -> /g'
+	fi
+	local proto
+	echo
+	if [ "$FINISHED" = '0' ]; then
+		for proto in "${global_params[@]}"; do
+			show_report $proto ${2:-full} ${1:-}
+		done
+	else
+		create_reports
+	fi
+}
+
+post_hook() { :; }
+pre_hook() { :; }
+
 use_hook() {
 	hook=$HOOKDIR/${0##*/}
-	[ -x $hook ] && . $hook
+	[ -x $hook ] && . $hook || true
+}
+
+main() {
+	pre_hook
+	clean
+	> $DATADIR/report
+	> $DATADIR/report.sys
+	for test in "${global_params[@]}"; do
+		$test
+	done
+	create_report first
+	rm -rf $DATADIR.first
+	cp -a "$DATADIR" "$DATADIR.first"
+	lists['http']=$DATADIR.first/http/1
+	lists['dns']=$DATADIR.first/dns/1
+	lists['https']=$DATADIR.first/https/1
+	clean
+	for test in "${global_params[@]}"; do
+		$test
+	done
+	create_report repeat
+	FINISHED=1
+	create_reports > $DATADIR/report
+	send_reports
+	post_hook
 }
 
 use_hook
-pre_hook
-clean
-main_loop < "${1:-$RKN_LIST}"
-create_report > $DATADIR/report
-/opt/reductor_satellite/bin/send_report.sh "${admin['ip']:-${autoupdate['email']}}"
-post_hook
+[ "$#" -gt 0 ] || set -- http https dns
+declare -a global_params
+global_params=( "$@" )
+main "${global_params[@]}"
