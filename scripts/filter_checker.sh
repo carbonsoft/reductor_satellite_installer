@@ -5,12 +5,13 @@ set -u
 CONST=/opt/reductor_satellite/etc/const
 SYSCONFIG=/etc/sysconfig/satellite
 
+declare -A admin
+declare -A autoupdate
+
 if [ ! -f $CONST ]; then
 	MAINDIR="./"
 	LISTDIR="$MAINDIR/lists"
 	HOOKDIR="$MAINDIR/userinfo/hooks"
-	declare -A admin
-	declare -A autoupdate
 else
 	. $CONST
 	. $CONFIG
@@ -137,7 +138,7 @@ create_reports() {
 
 send_reports() {
 	# shellcheck disable=SC2154
-	receiver="${admin['ip']:-${autoupdate['email']:-}}"
+	receiver="${admin['email']:-${autoupdate['email']:-}}"
 	if [ -z "${receiver:-}" ]; then
 		echo "Пропускаем отправку, так как нет получателя"
 		return
