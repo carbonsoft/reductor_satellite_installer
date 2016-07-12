@@ -54,7 +54,7 @@ main
 
 reduce_config() {
 	echo "Удаляем лишнее из конфига"
-	egrep -w "(bash|(^declare -A |^)autoupdate)" $MAINDIR/userinfo/config | egrep -v "(url|skip_sign_request)" > /tmp/config
+	egrep -w "(bash|(^declare -A |^)autoupdate)" $MAINDIR/userinfo/config > /tmp/config
 	cat /tmp/config > $MAINDIR/userinfo/config
 }
 
