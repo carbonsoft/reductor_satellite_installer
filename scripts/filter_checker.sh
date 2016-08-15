@@ -51,7 +51,7 @@ catch_lock() {
 	mkdir -p $LOCKDIR
 	exec 3>$LOCKFILE
 	echo "Ждём lockfile (max 60 sec).." >&2
-	if ! timeout -s 15 60s flock -x 3; then
+	if ! flock -w 15 -x 3; then
 		echo "Не дождались освобождения lockfile" >&2
 		exit 1
 	fi
