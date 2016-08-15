@@ -97,14 +97,16 @@
 
 Правильного способа пока нет. Временное решение:
 
-    /opt/reductor_satellite/update.sh
+    /opt/reductor_satellite_installer/update.sh
 
 Можно явно задать URL RPM-пакета
-
+    
+    cd /opt/reductor_satellite_installer
     RPM_URL=http://download5.carbonsoft.ru//reductor/master/reductor-711-107-master.el6.x86_64.rpm ./update.sh
 
 или
 
+    cd  /opt/reductor_satellite_installer
     RPM_URL=http://download5.carbonsoft.ru//reductor/devel/reductor.rpm ./update.sh
 
 Для обновления скриптов проверки фильтрации можно обойтись:
