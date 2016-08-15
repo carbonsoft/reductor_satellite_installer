@@ -4,7 +4,8 @@ set -u
 
 CONST=/opt/reductor_satellite/etc/const
 SYSCONFIG=/etc/sysconfig/satellite
-LOCKFILE=/var/lock/subsys/filter_checker.lock
+LOCKDIR=/var/lock/reductor/
+LOCKFILE=$LOCKDIR/rkn_download.lock
 
 declare -A admin
 declare -A autoupdate
@@ -47,6 +48,7 @@ trap show_reports EXIT
 trap show_reports HUP
 
 catch_lock() {
+	mkdir -p $LOCKDIR
 	exec 3>$LOCKFILE
 	echo "Ждём lockfile (max 60 sec).." >&2
 	if ! timeout -s 15 60s flock -x 3; then
