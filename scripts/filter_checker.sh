@@ -4,6 +4,7 @@ set -u
 
 CONST=/opt/reductor_satellite/etc/const
 SYSCONFIG=/etc/sysconfig/satellite
+LOCKFILE=/var/lock/subsys/filter_checker.lock
 
 declare -A admin
 declare -A autoupdate
@@ -44,6 +45,16 @@ FINISHED=0
 
 trap show_reports EXIT
 trap show_reports HUP
+
+catch_lock() {
+	exec 3>$LOCKFILE
+	echo "Ждём lockfile (max 60 sec).." >&2
+	if ! timeout -s 15 60s flock -x 3; then
+		echo "Не дождались освобождения lockfile" >&2
+		exit 1
+	fi
+	echo "Выполняем проверку" >&2
+}
 
 clean() {
 	mkdir -p $DATADIR/{dns,http,https} $TMPDIR/
@@ -199,6 +210,7 @@ show_reports() {
 		for ((i=${#FUNCNAME[@]}; i>0; i--)); do
 			echo -n "${FUNCNAME[$i-1]} "
 		done | $SED -e 's/ $/\n/; s/ / -> /g'
+		flock -u 3
 	fi
 	local proto
 	echo
@@ -221,6 +233,7 @@ use_hook() {
 
 main() {
 	pre_hook
+	catch_lock
 	clean
 	> $DATADIR/report
 	> $DATADIR/report.sys
