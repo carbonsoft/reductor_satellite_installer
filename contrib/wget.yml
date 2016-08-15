@@ -1,0 +1,13 @@
+- hosts: [localhost]
+  tasks:
+    - yum: name="@Development tools" state=present
+    - yum: name=libidn-devel state=present
+    - yum: name=openssl-devel state=present
+    - yum: name=gnutls-devel state=present
+    - yum: name=pcre-devel state=present
+    - get_url: url=http://ftp.gnu.org/gnu/wget/wget-1.18.tar.gz dest=/root/wget-1.18.tar.gz
+    - unarchive: src=/root/wget-1.18.tar.gz dest=/root/ remote_src=yes
+    - command: bash -c "./configure --with-ssl=openssl && make && make install"
+      args:
+        chdir: /root/wget-1.18/
+        creates: /usr/local/bin/wget

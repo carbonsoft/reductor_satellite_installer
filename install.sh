@@ -107,6 +107,17 @@ copy_contrib() {
 	cp -av /opt/reductor_satellite_installer/scripts/*.sh $MAINDIR/bin/
 }
 
+new_wget() {
+	echo "Собираем и устанавливаем новый wget с опцией --content-on-error"
+	if wget --help | grep -q content-on-error; then
+		return 0
+	fi
+	if [ ! -x /usr/bin/ansible ]; then
+		yum -y install ansible
+	fi
+	ansible-playbook /opt/reductor_satellite_installer/contrib/wget.yml
+}
+
 main() {
 	set_env
 	cleanup_src
@@ -119,6 +130,7 @@ main() {
 	symlinks
 	reduce_config
 	copy_contrib
+	new_wget
 	finish_msg
 }
 
