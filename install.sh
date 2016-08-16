@@ -113,6 +113,9 @@ new_wget() {
 		return 0
 	fi
 	if [ ! -x /usr/bin/ansible ]; then
+		if [ ! -f /etc/yum.repos.d/epel.repo ]; then
+			yum -y install epel-release
+		fi
 		yum -y install ansible
 	fi
 	ansible-playbook /opt/reductor_satellite_installer/contrib/wget.yml
