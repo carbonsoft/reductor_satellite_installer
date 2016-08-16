@@ -68,6 +68,8 @@ clean() {
 			> $d/$f
 		done
 	done
+	egrep -v "^$ip_regex$" "${lists['dns']}" > "${lists['dns']}".noip || true
+	mv -f "${lists['dns']}".noip "${lists['dns']}"
 }
 
 check_dns_a() {
