@@ -2,6 +2,9 @@
 
 set -u
 
+# для нового wget
+export PATH=$PATH:/usr/local/bin/
+
 CONST=/opt/reductor_satellite/etc/const
 SYSCONFIG=/etc/sysconfig/satellite
 LOCKDIR=/var/lock/reductor/
