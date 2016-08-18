@@ -3,8 +3,6 @@
 set -u
 
 # для нового wget
-export PATH=$PATH:/usr/local/bin/
-
 CONST=/opt/reductor_satellite/etc/const
 SYSCONFIG=/etc/sysconfig/satellite
 LOCKDIR=/var/lock/reductor/
@@ -44,7 +42,7 @@ DNS_IP="${DNS_IP:-10.50.140.73}"
 SED=/usr/local/bin/gsed
 [ -f $SED ] || SED=sed
 CURL="curl --insecure --connect-timeout 10 -sSL"
-WGET="wget --content-on-error --no-check-certificate -t 1 -T 10 -q -O-"
+WGET="/usr/local/bin/wget --content-on-error --no-check-certificate -t 1 -T 10 -q -O-"
 FINISHED=0
 
 trap show_reports EXIT
