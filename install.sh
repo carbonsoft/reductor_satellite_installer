@@ -61,19 +61,7 @@ reduce_config() {
 create_rkn_hook() {
 	echo "Ещё немного модифицируем выгрузки"
 	mkdir -p $MAINDIR/userinfo/hooks/
-	echo '#!/bin/bash
-
-main() {
-        log "Запущено обновление списков РосКомНадзора"
-        log "Запущено обновление списков РосКомНадзора" >> $LOGFILE
-        prepare
-        check_private_key
-        chroot_work
-        $BINDIR/dump_parser.sh
-        client_post_hook
-        log "Завершено обновление списков РосКомНадзора"
-        log "Завершено обновление списков РосКомНадзора" >> $LOGFILE
-}' > $MAINDIR/userinfo/hooks/rkn_download.sh
+	cp -a ${MAINDIR}_installer/contrib/rkn_download.sh.hook $MAINDIR/userinfo/hooks/rkn_download.sh
 	chmod a+x $MAINDIR/userinfo/hooks/rkn_download.sh
 }
 
