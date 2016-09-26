@@ -1,0 +1,17 @@
+#!/bin/bash
+
+main() {
+        log "Запущено обновление списков РосКомНадзора"
+        log "Запущено обновление списков РосКомНадзора" >> $LOGFILE
+        prepare
+        check_private_key
+	if [ "${autoupdate['own']}" = '1' -a -n "${autoupdate['own_url']}" ]; then
+		download_from_own_server
+	else
+		chroot_work
+	fi
+        $BINDIR/dump_parser.sh
+        client_post_hook
+        log "Завершено обновление списков РосКомНадзора"
+        log "Завершено обновление списков РосКомНадзора" >> $LOGFILE
+}
