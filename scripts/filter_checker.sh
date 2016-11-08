@@ -42,7 +42,7 @@ DNS_IP="${DNS_IP:-10.50.140.73}"
 SED=/usr/local/bin/gsed
 [ -f $SED ] || SED=sed
 CURL="curl --insecure --connect-timeout 10 -m 15 -sSL"
-WGET="/usr/local/bin/wget --content-on-error --no-check-certificate -t 1 -T 10 -q -O-"
+WGET="/usr/local/bin/wget --content-on-error --no-hsts --no-check-certificate -t 1 -T 10 -q -O-"
 FINISHED=0
 
 trap show_reports EXIT
@@ -60,6 +60,7 @@ catch_lock() {
 }
 
 clean() {
+	rm -f ~/.wget-hsts
 	mkdir -p $DATADIR/{dns,http,https} $TMPDIR/
 	for f in 0 1 2; do
 		for d in $DATADIR/{dns,http,https}; do
