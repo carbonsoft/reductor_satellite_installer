@@ -16,21 +16,24 @@ if [ ! -f $CONST ]; then
 	LISTDIR="$MAINDIR/lists"
 	HOOKDIR="$MAINDIR/userinfo/hooks"
 else
+	# shellcheck disable=SC1090
 	. $CONST
+	# shellcheck disable=SC1090
 	. $CONFIG
 fi
 
 if [ -f $SYSCONFIG ]; then
+	# shellcheck disable=SC1090
 	. $SYSCONFIG
 fi
 
 declare -A lists
 # shellcheck disable=SC2154
-lists['http']="${http:-$LISTDIR/rkn.list}"
+lists['http']="${http:-$LISTDIR/rkn/rkn.url_http}"
 # shellcheck disable=SC2154
-lists['dns']="${dns:-$LISTDIR//rkn.httpslist}"
+lists['dns']="${dns:-$LISTDIR/rkn/rkn.domains_exact}"
 # shellcheck disable=SC2154
-lists['https']="${https:-$LISTDIR//rkn.https_urls}"
+lists['https']="${https:-$LISTDIR/rkn/rkn.url_https}"
 
 VERBOSE="${VERBOSE:-0}"
 THREADS=15
@@ -98,6 +101,7 @@ check_url() {
 	for METHOD in "$CURL" "$WGET"; do
 		$METHOD "$1" > $file 2>/dev/null
 		rc=$?                   # wget return 8 on 404
+		# shellcheck disable=SC2166
 		if [ "$rc" -gt 0 ] && ! [ "$rc" = "8" -a "$METHOD" = "$WGET" ]; then
 			echo "$1" >> $dir/2
 			rm -f $file
@@ -160,6 +164,7 @@ send_reports() {
 		echo "Пропускаем отправку, так как нет получателя"
 		return
 	fi
+	echo /opt/reductor_satellite/bin/send_report.sh $receiver
 	/opt/reductor_satellite/bin/send_report.sh $receiver
 }
 
@@ -234,6 +239,7 @@ pre_hook() { :; }
 
 use_hook() {
 	hook=$HOOKDIR/${0##*/}
+	# shellcheck disable=SC1090
 	[ -x $hook ] && . $hook || true
 }
 
