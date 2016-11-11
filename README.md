@@ -33,7 +33,7 @@
 
 ### С Carbon Reductor
 
-    # /usr/local/Reductor/bin/setup_satellite.sh 
+    # /usr/local/Reductor/bin/setup_satellite.sh
     Usage: /usr/local/Reductor/bin/setup_satellite.sh <ip of satellite machine> [ssh port]
     Example: /usr/local/Reductor/bin/setup_satellite.sh 10.90.30.35
     Example: /usr/local/Reductor/bin/setup_satellite.sh 10.90.30.36 33
@@ -57,16 +57,37 @@
 ### Настройка проверки фильтрации трафика
 
 Для проверки 4 раза в день, добавьте в /etc/crontab строчку:
-    
-    0 0,6,12,18 * * * root /opt/reductor_satellite/bin/filter_checker.sh < /opt/reductor_satellite/lists/rkn.list &>/dev/null
+
+    0 0,6,12,18 * * * root /opt/reductor_satellite/bin/filter_checker.sh &>/dev/null
 
 Подробнее о том, как настроить время запуска проверки можно прочитать здесь:
 
     man 5 crontab
 
+### Специфика провайдера
+
+Также можно и нужно указать специфичные для satellite опции в файле ```/etc/sysconfig/satellite```, это:
+
+- **DNS_IP** - IP адрес используемой страницы-заглушки. Обязательно.
+- **MARKER** - текст, по которому можно определить, что открылась именно страница заглушка. Необязательно.
+- **http** - файл со списком HTTP URL для проверки. Необязательно, нужно только для переопределения.
+- **https** - файл со списком HTTPS URL для проверки. Необязательно, нужно только для переопределения.
+- **dns** - файл со списком доменов, которые надо блокировать. Необязательно, нужно только для переопределения.
+- **admin['email']** - отдельный email для отправки отчётов о фильтрации (если не хотите чтобы они приходили на почту указанную для выгрузки)
+
+Пример:
+
+``` shell
+DNS_IP="1.2.3.4"
+MARK="<title>Доступ запрещён!</title>"
+dns="/root/my.domains.txt"
+declare -A admin
+admin['email']='admin@example.com'
+```
+
 ### Сохранять выгруженные реестры
 
-Запускайте по cron'у /opt/reductor_satellite/bin/keep_dumps.sh 
+Запускайте по cron'у /opt/reductor_satellite/bin/keep_dumps.sh
 
 Если необходимо подстроить формат именования файла под себя, можете заглянуть в него, он довольно простой.
 
@@ -100,7 +121,7 @@
     /opt/reductor_satellite_installer/update.sh
 
 Можно явно задать URL RPM-пакета
-    
+
     cd /opt/reductor_satellite_installer
     RPM_URL=http://download5.carbonsoft.ru//reductor/master/reductor-711-107-master.el6.x86_64.rpm ./update.sh
 
@@ -110,11 +131,11 @@
     RPM_URL=http://download5.carbonsoft.ru//reductor/devel/reductor.rpm ./update.sh
 
 Для обновления скриптов проверки фильтрации можно обойтись:
-    
+
     cd /opt/reductor_satellite_installer/
     git pull origin master
     ./install.sh copy_contrib
-    
+
 ### Какие известные минусы имеются у программы
 
 - Отсутствие веб-интерфейса;
