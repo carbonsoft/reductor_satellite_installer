@@ -31,7 +31,7 @@ declare -A lists
 # shellcheck disable=SC2154
 lists['http']="${http:-$LISTDIR/rkn/rkn.url_http}"
 # shellcheck disable=SC2154
-lists['dns']="${dns:-$LISTDIR/rkn/rkn.domains_exact}"
+lists['dns']="${dns:-$LISTDIR/rkn/rkn.domain_exact}"
 # shellcheck disable=SC2154
 lists['https']="${https:-$LISTDIR/rkn/rkn.url_https}"
 
