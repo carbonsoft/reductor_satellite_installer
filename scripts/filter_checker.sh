@@ -72,6 +72,13 @@ clean() {
 	done
 	egrep -v "^$ip_regex$" "${lists['dns']}" > "${lists['dns']}".noip || true
 	mv -f "${lists['dns']}".noip "${lists['dns']}"
+	if [ "${LIMIT:--1}" == '-1' ]; then
+		return 0
+	fi
+	for list in ${!lists[@]}; do
+		shuf -n $LIMIT "${lists[$list]}" > $TMPDIR/check.$list
+		lists[$list]=$TMPDIR/check.$list
+	done
 }
 
 check_dns_a() {
@@ -164,8 +171,10 @@ send_reports() {
 		echo "Пропускаем отправку, так как нет получателя"
 		return
 	fi
-	echo /opt/reductor_satellite/bin/send_report.sh $receiver
-	/opt/reductor_satellite/bin/send_report.sh $receiver
+	for mail in $receiver; do
+		echo /opt/reductor_satellite/bin/send_report.sh $mail
+		/opt/reductor_satellite/bin/send_report.sh $mail
+	done
 }
 
 show_report_stat() {
