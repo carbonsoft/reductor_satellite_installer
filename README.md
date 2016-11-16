@@ -82,7 +82,7 @@ DNS_IP="1.2.3.4"
 MARK="<title>Доступ запрещён!</title>"
 dns="/root/my.domains.txt"
 declare -A admin
-admin['email']='admin@example.com'
+admin['email']='admin@example.com admin2@example.com'
 ```
 
 ### Сохранять выгруженные реестры
@@ -135,6 +135,20 @@ admin['email']='admin@example.com'
     cd /opt/reductor_satellite_installer/
     git pull origin master
     ./install.sh copy_contrib
+
+### Как запустить быструю проверку по случайным доменам?
+
+```
+LIMIT=300 /opt/reductor_satellite/bin/filter_checker
+```
+
+где LIMIT - число URL, доменов для каждого вида проверки.
+
+Также можно указать конкретный вид проверяемой фильтрации:
+
+```
+LIMIT=100 /opt/reductor_satellite/bin/filter_checker dns
+```
 
 ### Какие известные минусы имеются у программы
 
