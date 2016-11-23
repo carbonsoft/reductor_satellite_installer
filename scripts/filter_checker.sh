@@ -70,12 +70,13 @@ clean() {
 			> $d/$f
 		done
 	done
+	# shellcheck disable=SC2154
 	egrep -v "^$ip_regex$" "${lists['dns']}" > "${lists['dns']}".noip || true
 	mv -f "${lists['dns']}".noip "${lists['dns']}"
 	if [ "${LIMIT:--1}" == '-1' ]; then
 		return 0
 	fi
-	for list in ${!lists[@]}; do
+	for list in "${!lists[@]}"; do
 		shuf -n $LIMIT "${lists[$list]}" > $TMPDIR/check.$list
 		lists[$list]=$TMPDIR/check.$list
 	done
@@ -120,8 +121,53 @@ check_url() {
 	done
 }
 
+read_lines() {
+	local file="$1"
+	local from_line="$2"
+	local lines_count="$3"
+	tail -n +$from_line $file | head -$lines_count
+}
+
+cut_file() {
+	local file="$1"
+	local parts="$2"
+	local lines_per_part="$3"
+	mkdir -p $file.parts/
+	for part in $(seq 0 $((parts))); do
+		read_lines $file $((part*lines_per_part + 1)) $lines_per_part > $file.parts/$part
+	done
+}
+
+thread() {
+	local func="$1"
+	local proto="$2"
+	local part_file="$3"
+	local basename="${part_file##*/}"
+	local counter=1
+	while read -t 1 entry; do
+		$func "$entry" "$proto"
+		((counter++))
+		if [ "$basename" = '1' ] && [ "$((counter % THREADS))" = 0 ]; then
+			show_report $proto
+		fi
+	done < $part_file
+	wait
+}
+
+run_threads() {
+	local file="$1"
+	local parts="$2"
+	local func="$3"
+	for part in $(seq 0 $((parts))); do
+		thread $func $proto $file.parts/$part &
+	done
+	wait
+}
+
 checker() {
 	local func proto list
+	local LINES
+	local LINES_PER_THREAD
 	func=$1
 	proto=$2
 	list="${3:-${lists[$proto]}}"
@@ -129,15 +175,10 @@ checker() {
 	sleep 0.5
 	sort -u "$list" > "$list.sorted"
 	mv -f "$list.sorted" "$list"
-	while sleep 0.1; do
-		for _ in $(seq 1 $THREADS); do
-			read -t 1 entry || break 2
-			$func "$entry" "$proto" &
-		done
-		wait
-		show_report "$proto"
-	done < "$list"
-	wait # after break 2 we can have some background jobs
+	LINES=$(wc -l < $list)
+	LINES_PER_THREAD=$((LINES/THREADS))
+	cut_file $list $THREADS $LINES_PER_THREAD
+	run_threads $list $THREADS $func $proto
 	show_report "$proto"
 }
 
