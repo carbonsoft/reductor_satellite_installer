@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 check_dns_a() {
 	dig "$1" A | grep -q "$2"
 }
@@ -9,13 +11,20 @@ check_dns_aaaa() {
 }
 
 main() {
-	local proto dir
-	proto=$2
-	dir="$DATADIR/$proto"
-	check_dns_a "$1" "$DNS_IP"
-	echo "$1" >> $dir/$?
-	check_dns_aaaa "$1"
-	echo "$1" >> $DATADIR/dns/$?
+	local proto dir rc
+	rc=0
+	check_dns_a "$1" "$DNS_IP" || rc=$?
+	echo "$1" >> $DATADIR/dns/$rc
+	if [ "$rc" -gt 0 ]; then
+		echo "$(date) failed dig $1 A"
+	fi
+
+	rc=0
+	check_dns_aaaa "$1" || rc=$?
+	echo "$1" >> $DATADIR/dns/$rc
+	if [ "$rc" -gt 0 ]; then
+		echo "$(date) failed dig $1 AAAA"
+	fi
 }
 
 main "$@"

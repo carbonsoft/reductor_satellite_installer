@@ -35,14 +35,14 @@ lists['dns']="${dns:-$LISTDIR/rkn/rkn.domain_exact}"
 # shellcheck disable=SC2154
 lists['https']="${https:-$LISTDIR/rkn/rkn.url_https}"
 
-VERBOSE="${VERBOSE:-0}"
-THREADS=15
+export VERBOSE="${VERBOSE:-0}"
+export THREADS="${THREADS:-15}"
 export FIRST_BYTES_FOR_CHECK=3000
 export DATADIR=$MAINDIR/var
-TMPDIR=/tmp/filter_check/
-MARKER="${MARKER:-"<title>Доступ ограничен</title>"}"
-DNS_IP="${DNS_IP:-10.50.140.73}"
-SED=/usr/local/bin/gsed
+export TMPDIR=/tmp/filter_check/
+export MARKER="${MARKER:-"<title>Доступ ограничен</title>"}"
+export DNS_IP="${DNS_IP:-10.50.140.73}"
+export SED=/usr/local/bin/gsed
 [ -f $SED ] || SED=sed
 export CURL="curl --insecure --connect-timeout 10 -m 15 -sSL"
 export WGET="/usr/local/bin/wget --content-on-error --no-hsts --no-check-certificate -t 1 -T 10 -q -O-"
@@ -111,7 +111,7 @@ run_threads() {
 checker() {
 	local func proto list
 	func=$1
-	proto=$2
+	proto=${2:-}
 	list="${3:-${lists[$proto]}}"
 	echo "Начинаем проверять фильтрацию протокола $proto по файлу $list"
 	sleep 0.5
