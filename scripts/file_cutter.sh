@@ -21,5 +21,4 @@ main() {
     tail -n $((lines- lines_per_part * parts)) $file > $file.parts/$parts
 }
 
-echo "$0 $*"
 main "$@"
