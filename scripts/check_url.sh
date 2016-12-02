@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 main() {
 	local file
 	local dir
@@ -15,8 +17,12 @@ main() {
 			rm -f $file
 			return
 		fi
-		head -c $FIRST_BYTES_FOR_CHECK "$file" | grep -q "$MARKER"
-		echo "$1" >> $dir/$?
+		rc=0
+		head -c $FIRST_BYTES_FOR_CHECK "$file" | grep -q "$MARKER" || rc=$?
+		echo "$1" >> $dir/$rc
+		if [ "$rc" != '0' ]; then
+			echo "$(date) failed $METHOD $1"
+		fi
 		rm -f $file
 	done
 }
