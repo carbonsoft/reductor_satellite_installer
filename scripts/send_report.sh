@@ -19,9 +19,19 @@ ru_names() {
 	sed -e 's|/opt/reductor_satellite/var.first|Первая проверка|g; s|/opt/reductor_satellite/var/|Повторная проверка |g; s|/1||;'
 }
 
+errors_exist() {
+	for errors in $(find /opt/reductor_satellite/ -type f -name "1"); do
+		[ ! -s $errors ] || return 0
+	done
+	return 1
+}
 
 show_errors() {
 	echo
+	if ! errors_exist; then
+		echo "# Пропуски фильтрации отсутствуют"
+		return 0
+	fi
 	echo "# Список пропусков фильтрации:"
 	for errors in $(find /opt/reductor_satellite/ -type f -name "1"); do
 		[ -s $errors ] || continue
