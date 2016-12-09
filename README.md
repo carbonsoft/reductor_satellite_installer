@@ -142,6 +142,17 @@ LIMIT=300 /opt/reductor_satellite/bin/filter_checker
 LIMIT=100 /opt/reductor_satellite/bin/filter_checker dns
 ```
 
+Можно ограничить проверку конкретным файлом:
+
+```
+http=/root/unblocked_http_urls.txt /opt/reductor_satellite/bin/filter_checker http
+```
+
+или несколькими файлами:
+```
+dns=/root/unblocked_domains.txt http=/root/unblocked_http_urls.txt /opt/reductor_satellite/bin/filter_checker http dns
+
+```
 ### Какие известные минусы имеются у программы
 
 - Отсутствие веб-интерфейса;
