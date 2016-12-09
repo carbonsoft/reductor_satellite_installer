@@ -33,7 +33,7 @@ show_errors() {
 		return 0
 	fi
 	echo "# Список пропусков фильтрации:"
-	for errors in $(find /opt/reductor_satellite/var.first/ -type f -name "1"); do
+	for errors in $(find /opt/reductor_satellite/var{.first,}/ -type f -name "1"); do
 		[ -s $errors ] || continue
 		echo
 		echo "## $errors"
