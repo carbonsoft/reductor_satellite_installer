@@ -71,7 +71,7 @@
 
 ``` shell
 DNS_IP="1.2.3.4"
-MARK="<title>Доступ запрещён!</title>"
+MARKER="<title>Доступ ограничен</title>"
 dns="/root/my.domains.txt"
 declare -A admin
 admin['email']='admin@example.com admin2@example.com'
@@ -131,7 +131,7 @@ admin['email']='admin@example.com admin2@example.com'
 ### Как запустить быструю проверку по случайным доменам?
 
 ```
-LIMIT=300 /opt/reductor_satellite/bin/filter_checker
+LIMIT=300 /opt/reductor_satellite/bin/filter_checker.sh
 ```
 
 где LIMIT - число URL, доменов для каждого вида проверки.
@@ -139,7 +139,7 @@ LIMIT=300 /opt/reductor_satellite/bin/filter_checker
 Также можно указать конкретный вид проверяемой фильтрации:
 
 ```
-LIMIT=100 /opt/reductor_satellite/bin/filter_checker dns
+LIMIT=100 /opt/reductor_satellite/bin/filter_checker.sh dns
 ```
 
 ### Какие известные минусы имеются у программы
