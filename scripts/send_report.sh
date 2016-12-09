@@ -20,7 +20,7 @@ ru_names() {
 }
 
 errors_exist() {
-	for errors in $(find /opt/reductor_satellite/ -type f -name "1"); do
+	for errors in $(find /opt/reductor_satellite/var.first/ -type f -name "1"); do
 		[ ! -s $errors ] || return 0
 	done
 	return 1
@@ -33,7 +33,7 @@ show_errors() {
 		return 0
 	fi
 	echo "# Список пропусков фильтрации:"
-	for errors in $(find /opt/reductor_satellite/ -type f -name "1"); do
+	for errors in $(find /opt/reductor_satellite/var{.first,}/ -type f -name "1"); do
 		[ -s $errors ] || continue
 		echo
 		echo "## $errors"
