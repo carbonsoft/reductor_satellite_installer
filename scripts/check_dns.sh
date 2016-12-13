@@ -2,8 +2,6 @@
 
 set -eu
 
-. /opt/reductor_satellite/bin/filter_config.sh
-
 declare -A netrc
 netrc['A']=0
 netrc['AAAA']=0
