@@ -88,8 +88,11 @@ thread() {
 	local part_file="$3"
 	local basename="${part_file##*/}"
 	local counter=1
+	local rc=0
 	while read -t 1 entry; do
-		$BINDIR/$func "$entry" "$proto"
+		rc=0
+		$BINDIR/$func "$entry" "$proto" || rc=$?
+		echo $entry >> $DATADIR/$proto/$rc
 		((counter++))
 		if [ "$basename" = '1' ] && [ "$((counter % THREADS))" = 0 ]; then
 			show_report $proto

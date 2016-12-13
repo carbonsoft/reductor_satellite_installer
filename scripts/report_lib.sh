@@ -9,8 +9,10 @@ create_report() {
 }
 
 create_reports() {
+	echo
 	echo "# Первая проверка"
 	cat $DATADIR.first/first.report
+	echo
 	echo "# Повторный проход по незаблокированным"
 	cat $DATADIR/repeat.report
 }
@@ -46,13 +48,16 @@ show_report_oneline() {
 	echo "$(date +"%Y.%m.%d %H:%M:%S") $1: $3 ok | $4 fail | $5 not open | $2 total"
 }
 
+__count() {
+	wc -l < "$1" | tr -d ' '
+}
+
 get_result() {
-	total="$(wc -l < $1 | tr -d ' ')"
-	ok=$(wc -l < $2/0 | tr -d ' ')
-	fail=$(wc -l < $2/1 | tr -d ' ')
-	not_open=$(wc -l < $2/2 | tr -d ' ')
-	total=$((total*2))  # http(s) checked by curl/wget, dns by A/AAAA
-	echo $total $ok $fail $not_open
+	total="$(__count $1)"
+	ok="$(__count $2/0)"
+	fail="$(__count $2/1)"
+	not_open="$(__count $2/2)"
+	echo "$total $ok $fail $not_open"
 }
 
 show_report() {
