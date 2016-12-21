@@ -2,8 +2,6 @@
 
 set -u
 
-. /opt/reductor_satellite/etc/const
-
 SUPERCONFIG=/opt/reductor_satellite/bin/filter_config.sh
 [ -f $SUPERCONFIG ] || SUPERCONFIG=./bin/filter_config.sh
 [ -f $SUPERCONFIG ] || exit 11
@@ -111,8 +109,8 @@ use_hook() {
 
 main() {
 	pre_hook
-	catch_lock
 	$BINDIR/update.sh
+	catch_lock
 	clean
 	> $DATADIR/report
 	> $DATADIR/report.sys
