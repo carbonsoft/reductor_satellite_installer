@@ -10,7 +10,6 @@ net() {
 	local url="$1"
 	local method="$2"
 	local dir="$3"
-	local file="$4"
 	if [ "$method" = 'A' ]; then
 		dig "${method}" "$url" | grep -q "$DNS_IP"
 	elif [ "$method" = 'AAAA' ]; then
@@ -36,12 +35,10 @@ analyze() {
 }
 
 main() {
-	local file
 	local url="$1"
 	local dir="$DATADIR/$2"
-	file="$(mktemp $TMPDIR/XXXXXX)"
 	for method in "A" "AAAA"; do
-		net "$url" "$method" "$dir" "$file" || netrc[$method]=$?
+		net "$url" "$method" "$dir" || netrc[$method]=$?
 	done
 	analyze
 }
