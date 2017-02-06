@@ -109,6 +109,7 @@ use_hook() {
 
 main() {
 	pre_hook
+	$BINDIR/update.sh
 	catch_lock
 	clean
 	> $DATADIR/report

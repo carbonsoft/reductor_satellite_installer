@@ -11,7 +11,7 @@ set_env() {
 	yum -y install $RPM_URL
 	cp -ap /usr/local/Reductor/ $MAINDIR/
 	yum -y erase reductor
-	mkdir -p /var/log/reductor/
+	mkdir -p /var/{log,lock}/reductor/
 }
 
 cleanup_src() {
