@@ -20,6 +20,8 @@ fi
 if [ -f $SYSCONFIG ]; then
 	# shellcheck disable=SC1090
 	. $SYSCONFIG
+else
+        echo "Не найден конфигурационный файл $SYSCONFIG" && exit 2
 fi
 
 # shellcheck disable=SC1090
