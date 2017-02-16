@@ -21,7 +21,12 @@ if [ -f $SYSCONFIG ]; then
 	# shellcheck disable=SC1090
 	. $SYSCONFIG
 else
-        echo "Не найден конфигурационный файл $SYSCONFIG" && exit 2
+        echo "Не настроен до конца satellite. Создайте файл $SYSCONFIG и"
+	echo "укажите в нём переменную DNS_IP, указывающую IP адрес страницы-заглушки."
+	echo "Это необходимо для корректной проверки DNS-фильтрации."
+	echo "Все опции $SYSCONFIG:"
+	echo "https://github.com/carbonsoft/reductor_satellite_installer#Специфика-провайдера"
+	exit 2
 fi
 
 # shellcheck disable=SC1090
