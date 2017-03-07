@@ -25,9 +25,9 @@ catch_lock() {
 
 clean() {
 	rm -f ~/.wget-hsts
-	mkdir -p $DATADIR/{dns,http,https} $TMPDIR/
+	mkdir -p $DATADIR/{dns,http,https,ip} $TMPDIR/
 	for f in 0 1 2; do
-		for d in $DATADIR/{dns,http,https}; do
+		for d in $DATADIR/{dns,http,https,ip}; do
 			> $d/$f
 		done
 	done
@@ -98,6 +98,10 @@ dns() {
 	checker check_dns.sh dns
 }
 
+ip() {
+	checker check_ip.sh ip
+}
+
 post_hook() { :; }
 pre_hook() { :; }
 
@@ -125,6 +129,7 @@ main() {
 	lists['dns']=$DATADIR.first/dns/1
 	# shellcheck disable=SC2154
 	lists['https']=$DATADIR.first/https/1
+	lists['ip']=$DATADIR.first/ip/1
 	clean
 	for test in "${global_params[@]}"; do
 		$test
@@ -137,7 +142,7 @@ main() {
 }
 
 use_hook
-[ "$#" -gt 0 ] || set -- http https dns
+[ "$#" -gt 0 ] || set -- http https dns ip
 declare -a global_params
 global_params=( "$@" )
 export global_params
