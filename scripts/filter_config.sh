@@ -20,6 +20,13 @@ fi
 if [ -f $SYSCONFIG ]; then
 	# shellcheck disable=SC1090
 	. $SYSCONFIG
+else
+	echo "Не настроен до конца satellite. Создайте файл $SYSCONFIG и"
+	echo "укажите в нём переменную DNS_IP, указывающую IP адрес страницы-заглушки."
+	echo "Это необходимо для корректной проверки DNS-фильтрации."
+	echo "Все опции $SYSCONFIG:"
+	echo "https://github.com/carbonsoft/reductor_satellite_installer#Специфика-провайдера"
+	exit 2
 fi
 
 # shellcheck disable=SC1090
@@ -32,6 +39,9 @@ lists['http']="${http:-$LISTDIR/rkn/rkn.url_http}"
 lists['dns']="${dns:-$LISTDIR/rkn/rkn.domain_exact}"
 # shellcheck disable=SC2154
 lists['https']="${https:-$LISTDIR/rkn/rkn.url_https}"
+# shellcheck disable=SC2154
+# shellcheck disable=SC2034
+lists['ip']="${ip:-$LISTDIR/rkn/rkn.ip_block}"
 
 export VERBOSE="${VERBOSE:-0}"
 export THREADS="${THREADS:-15}"
@@ -44,4 +54,5 @@ export SED=/usr/local/bin/gsed
 [ -f $SED ] || SED=sed
 export CURL="curl --insecure --connect-timeout 10 -m 15 -sSL"
 export WGET="/usr/local/bin/wget --content-on-error --no-hsts --no-check-certificate -t 1 -T 10 -q -O-"
+export PING="ping -c 1"
 export FINISHED=0
