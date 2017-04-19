@@ -16,7 +16,7 @@ russification() {
 }
 
 ru_names() {
-	sed -e 's|/opt/reductor_satellite/var.first|Первая проверка|g; s|/opt/reductor_satellite/var/|Повторная проверка |g; s|/1||;'
+	sed -e 's|/opt/reductor_satellite/var.first/|Первая проверка |g; s|/opt/reductor_satellite/var/|Повторная проверка |g; s|http/1$|http|; s|https/1$|https|; s|dns/1$|dns|; s|ip/1$|ip|;'
 }
 
 errors_exist() {
