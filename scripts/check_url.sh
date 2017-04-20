@@ -36,7 +36,16 @@ data() {
 	head -c $FIRST_BYTES_FOR_CHECK "$file" | grep -q "$MARKER" || rc=$?
 	# it's necessary to write time when error happened
 	if [ "$rc" != '0' ]; then
-		echo "$(date) failed ${!method} $url"
+		if [ -n "${UPLINK_MARKER:-}" ] && grep -q "$UPLINK_MARKER" "$file"; then
+			echo "$(date) uplink replied ${!method} $url"
+		else
+			echo "$(date) failed ${!method} $url"
+			if [ "${DEBUG:-0}" = '1' ]; then
+				echo
+				cat $file
+				echo
+			fi
+		fi
 	fi
 	datarc[$method]="$rc"
 	rm -f $file
