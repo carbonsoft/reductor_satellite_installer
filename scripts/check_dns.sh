@@ -2,6 +2,8 @@
 
 set -eu
 
+export LANG=ru_RU.UTF-8
+
 declare -A netrc
 netrc['A']=0
 netrc['AAAA']=0
