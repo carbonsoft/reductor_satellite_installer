@@ -13,9 +13,9 @@ net() {
 	local method="$2"
 	local dir="$3"
 	if [ "$method" = 'A' ]; then
-		dig "${method}" "$url" | grep -q "$DNS_IP"
+		dig "${method}" "$url" | egrep -q "$DNS_IP"
 	elif [ "$method" = 'AAAA' ]; then
-		dig "${method}" "$url" | grep -q 'ANSWER: 0'
+		dig "${method}" "$url" | egrep -q 'ANSWER: 0'
 	else
 		echo "Ошибка программистов, передан неожиданный метод: $method, аргументы: $*"
 		return 3
