@@ -54,6 +54,9 @@ thread() {
 		rc=0
 		$BINDIR/$func "$entry" "$proto" || rc=$?
 		echo $entry >> $DATADIR/$proto/$rc
+		if [ "$rc" == '1' ]; then
+			log "failed $proto $entry"
+		fi
 		((counter++))
 		if [ "$basename" = '1' ] && [ "$((counter % THREADS))" = 0 ]; then
 			show_report $proto
