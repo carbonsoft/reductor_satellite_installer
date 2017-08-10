@@ -81,7 +81,7 @@ restore() {
 
 finish_msg() {
 	echo "Отлично, установка завершена!"
-	echo "Запустите $MAINDIR/bin/setup_master.sh или menu для дальнейшей настройки"
+	echo "Запустите команду menu для дальнейшей настройки"
 	echo "(находясь на сервере с carbon reductor satellite)"
 }
 
