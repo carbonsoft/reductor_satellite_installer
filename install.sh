@@ -3,7 +3,7 @@
 # (c) Carbon Soft
 
 MAINDIR=/opt/reductor_satellite
-RPM_URL="${RPM_URL:-http://download5.carbonsoft.ru/reductor/reductor.rpm?install=1}"
+RPM_URL="${RPM_URL:-http://download5.carbonsoft.ru/reductor/reductor.rpm}"
 
 set_env() {
 	rm -rf $MAINDIR/
