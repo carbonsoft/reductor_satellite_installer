@@ -41,6 +41,7 @@ clean() {
 		shuf -n $LIMIT "${lists[$list]}" > $TMPDIR/check.$list
 		lists[$list]=$TMPDIR/check.$list
 	done
+	find "$TMPDIR" -type f -delete
 }
 
 thread() {
