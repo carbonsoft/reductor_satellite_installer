@@ -41,7 +41,6 @@ clean() {
 		shuf -n $LIMIT "${lists[$list]}" > $TMPDIR/check.$list
 		lists[$list]=$TMPDIR/check.$list
 	done
-	find "$TMPDIR" -type f -delete
 }
 
 thread() {
@@ -142,6 +141,7 @@ main() {
 	export FINISHED=1
 	create_reports > $DATADIR/report
 	send_reports
+	find "$TMPDIR" -type f -delete
 	post_hook
 }
 
