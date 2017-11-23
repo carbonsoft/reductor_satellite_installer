@@ -116,7 +116,9 @@ use_hook() {
 
 main() {
 	pre_hook
-	$BINDIR/update.sh
+	if [ "${NOUPDATE:-0}" != '1' ]; then
+		$BINDIR/update.sh
+	fi
 	catch_lock
 	clean
 	> $DATADIR/report
