@@ -65,6 +65,10 @@
 
     0 0,6,12,18 * * * root /opt/reductor_satellite/bin/filter_checker.sh &>/dev/null
 
+Или, если вам интересны логи (не забудьте проверить, что логи действительно пишутся):
+
+    0 0,6,12,18 * * * root /opt/reductor_satellite/bin/filter_checker.sh &>>/var/log/filter_checker.log
+
 Подробнее о том, как настроить время запуска проверки можно прочитать здесь:
 
     man 5 crontab
