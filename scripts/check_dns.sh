@@ -13,7 +13,7 @@ net() {
 	local method="$2"
 	local dir="$3"
 	if [ "$method" = 'A' ]; then
-		dig "${method}" "$url" | egrep -q "$DNS_IP"
+		dig +short "${method}" "$url" | egrep -q "$DNS_IP"
 	elif [ "$method" = 'AAAA' ]; then
 		dig "${method}" "$url" | egrep -q 'ANSWER: 0'
 	else
