@@ -8,16 +8,25 @@ declare -A netrc
 netrc['A']=0
 netrc['AAAA']=0
 
+TMPDIR=/tmp/filter_check/dns/$$/
+mkdir -p $TMPDIR
+
 net() {
 	local url="$1"
 	local method="$2"
 	local dir="$3"
 	if [ "$method" = 'A' ]; then
 		[ "${NO_A:-0}" == '1' ] && return 0
-		dig +short "${method}" "$url" | egrep -q "$DNS_IP"
+		if ! dig +short "${method}" "$url" > $TMPDIR/A; then
+			return 0
+		fi
+		egrep -q "$DNS_IP" $TMPDIR/A 
 	elif [ "$method" = 'AAAA' ]; then
 		[ "${NO_AAAA:-0}" == '1' ] && return 0
-		dig "${method}" "$url" | egrep -q 'ANSWER: 0'
+		if ! dig "${method}" "$url" > $TMPDIR/AAAA; then
+			return 0
+		fi
+		egrep -q 'ANSWER: 0' $TMPDIR/AAAA
 	else
 		echo "Ошибка программистов, передан неожиданный метод: $method, аргументы: $*"
 		return 3
@@ -45,6 +54,7 @@ main() {
 		net "$url" "$method" "$dir" || netrc[$method]=$?
 	done
 	analyze
+	rm -rf $TMPDIR
 }
 
 main "$@"
