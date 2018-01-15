@@ -16,7 +16,7 @@ net() {
 	local dir="$3"
 	local file="$4"
 	local rc=0
-	${!method} "$url" > $file 2>/dev/null || rc=$?
+	timeout -s 15 25s ${!method} "$url" > $file 2>/dev/null || rc=$?
 	# wget return 8 on 404
 	# shellcheck disable=SC2166
 	if [ "$rc" -gt 0 ] && ! [ "$rc" = "8" -a "$method" = "WGET" ]; then
