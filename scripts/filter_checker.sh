@@ -15,7 +15,7 @@ trap show_reports HUP
 catch_lock() {
 	mkdir -p $LOCKDIR
 	exec 3>$LOCKFILE
-	echo "Ждём lockfile (max 60 sec).." >&2
+	echo "Ждём lockfile (max 15 sec).." >&2
 	if ! flock -w 15 -x 3; then
 		echo "Не дождались освобождения lockfile" >&2
 		exit 1
@@ -120,6 +120,10 @@ main() {
 		$BINDIR/update.sh
 	fi
 	catch_lock
+	declare -A lists_orig
+	for test in "${global_params[@]}"; do
+		lists_orig["$test"]="${lists[$test]}"
+	done
 	clean
 	> $DATADIR/report
 	> $DATADIR/report.sys
@@ -139,6 +143,31 @@ main() {
 	for test in "${global_params[@]}"; do
 		$test
 	done
+	if [ "${DO_RESYNC:-0}" == '1' ]; then
+		need_resync=0
+		# может и не понадобится пересинхронизация, если всё в порядке
+		for test in "${global_params[@]}"; do
+			[ -s "$DATADIR/$test/1" ] && need_resync=1 && break
+		done
+		# Здесь очень тупое неправильное использование локов, но рефакторить сложно, понадеемся что
+		# повторных вызовов во время RESYNC не будет происходить и нас спасут таймауты 15 сек в catch_lock
+		log "Выполняем синхронизацию повторно чтобы не беспокоить пропусками по удалённым ресурсам"
+		if [ "$need_resync" = '1' ]; then
+			flock -u 3
+			if ${BINDIR}/update.sh; then
+				for test in "${global_params[@]}"; do
+					fgrep -vwf "${lists_orig[$test]}" "$DATADIR/$test/1" > "$DATADIR/$test/1.resync"
+					[ ! -s "$DATADIR/$test/1.resync" ] && continue
+					log "Пока мы проверяли из реестра исключили $(wc -l < "$DATADIR/$test/1.resync") записей"
+					log "Уберём их из результатов повторной проверки"
+					fgrep -vwf "$DATADIR/$test/1.resync" "$DATADIR/$test/1" > "$DATADIR/$test/1.fixed"
+					mv -f "$DATADIR/$test/1.fixed" "$DATADIR/$test/1"
+				done
+			fi
+
+		fi
+		catch_lock
+	fi
 	create_report repeat
 	export FINISHED=1
 	create_reports > $DATADIR/report
