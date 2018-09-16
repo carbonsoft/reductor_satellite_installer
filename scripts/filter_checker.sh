@@ -155,7 +155,6 @@ main() {
 		if [ "$need_resync" = '1' ]; then
 			flock -u 3
 			if ${BINDIR}/update.sh; then
-				set -x
 				for test in "${global_params[@]}"; do
 					fgrep -vwf "${lists_orig[$test]}" "$DATADIR/$test/1" > "$DATADIR/$test/1.resync"
 					[ ! -s "$DATADIR/$test/1.resync" ] && continue
@@ -164,7 +163,6 @@ main() {
 					fgrep -vwf "$DATADIR/$test/1.resync" "$DATADIR/$test/1" > "$DATADIR/$test/1.fixed"
 					mv -f "$DATADIR/$test/1.fixed" "$DATADIR/$test/1"
 				done
-				set +x
 			fi
 
 		fi
