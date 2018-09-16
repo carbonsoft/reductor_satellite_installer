@@ -56,3 +56,5 @@ export CURL="curl --insecure --connect-timeout 10 -m 15 -sSL"
 export WGET="/usr/local/bin/wget --content-on-error --no-hsts --no-check-certificate -t 1 -T 10 -q -O-"
 export PING="ping -c 1"
 export FINISHED=0
+# включает повторную выгрузку реестра для исключения исключённых за время проверки ресурсов из результатов
+export DO_RESYNC="${DO_RESYNC:-0}"
